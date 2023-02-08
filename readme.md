@@ -4,13 +4,12 @@ Source code and dataset of MassNE.
 
 ### Introduction
 
-In this work, we study how to model interactions between massive agents for predicting battle outcomes, and explore the diminishing marginal utility of massive units.
+In this work, we study how to model interactions between massive units for predicting battle outcomes, and explore the diminishing marginal utility of massive units.
 
 ### Requirements
 
 * mpmath
 * trueskill 
-
 * numpy 
 * pandas
 * torch
