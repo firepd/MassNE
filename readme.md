@@ -4,7 +4,7 @@ Source code and dataset of MassNE.
 
 ### Introduction
 
-In this work, 我们研究了如何建模海量智能体间的交互用于预测战斗结果，并探索了diminishing marginal utility of combat units。
+In this work, we study how to model interactions between massive agents for predicting battle outcomes, and explore the diminishing marginal utility of massive units.
 
 ### Requirements
 
