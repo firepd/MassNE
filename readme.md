@@ -6,7 +6,7 @@ Source code and dataset of MassNE.
 
 In this work, we study how to model interactions between massive units for predicting battle outcomes, and explore the diminishing marginal utility of massive units.
 
-<video src="./demo.mp4"></video>
+<video src="demo.mp4"></video>
 
 ### Requirements
 
