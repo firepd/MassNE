@@ -23,7 +23,7 @@ python train.py
 
 
 
-#### Simulator 
+### Simulator 
 
 We used the simulator from https://github.com/jgs03177/sc2combatsim to simulate the combat. 
 
@@ -31,7 +31,7 @@ We made some modifications to the original simulator so that it can read the lin
 
 
 
-#### Lineup data Generation details
+### Lineup data Generation details
 
 1. Both ground units and air units are included. We excluded some magic units, since the AI sometimes doesn't control these units correctly.
 3. To simulate a battle, we randomly sample an amount of resources, and the resources of the two teams are the same. Training a combat unit cost the minerals and vespene gas. For simplicity, we assume one vespene gas is equivalent to two minerals.
