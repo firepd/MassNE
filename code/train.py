@@ -7,7 +7,7 @@ import time
 
 from data import Data
 from SC_model import BattleNet
-from our import *
+from Massive import *
 from utils import Result
 
 SEED = 128
@@ -17,7 +17,7 @@ np.random.seed(SEED)
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
-model_name = 'BattleNet'  # Mass, BattleNet
+model_name = 'Mass'  # Mass, BattleNet
 n_epochs = 60
 batch_size = 64
 learning_rate = 0.001
@@ -41,7 +41,7 @@ min_t_size, max_t_size = dataset.min_team_size, dataset.max_team_size
 
 
 if model_name == "Mass":
-    model = Mass(n_unit, hidden_dim, indi=indi, coop=coop, supp=supp, need_att=att, device=device)
+    model = MassNE(n_unit, hidden_dim, indi=indi, coop=coop, supp=supp, need_att=att, device=device)
 else:
     model = BattleNet(n_unit, 0, device=device)
 
