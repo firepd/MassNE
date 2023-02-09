@@ -1,6 +1,6 @@
 ### MassNE: Exploring Higher-Order Interactions with Marginal Effect for Massive Battle Outcome Prediction
 
-Source code and dataset of MassNE.
+Source code and dataset of MassNE (the 2023 Web Conference paper).
 
 ### Introduction
 
