@@ -65,14 +65,9 @@ class HeadcountEffect(nn.Module):  # Marginal effect
             batch = unit_nums.size(0)
             shift = self.shift.unsqueeze(0).expand(batch, -1).to(unit_nums.device)
             unit_nums = unit_nums + shift
-            num_effect = self.embed(unit_nums).squeeze(-1)  # [batch, n_unit]
-            num_effect = torch.relu(num_effect) * mask
-            return num_effect
-
-    def non_negative(self, func):
-        for layer in func:
-            if type(layer) == torch.nn.modules.linear.Linear:
-                layer.weight.data[layer.weight.data < 0] = 0
+            num_utility = self.embed(unit_nums).squeeze(-1)  # [batch, n_unit]
+            num_utility = torch.relu(num_utility) * mask
+            return num_utility
 
     def get_mono_loss(self):  # monotonicity loss
         if self.mode != 3:
@@ -94,7 +89,6 @@ class Cooperation(nn.Module):
 
         self.indi_effect = HeadcountEffect(n_unit, mode=indiv_mode)
         self.coop_effect = HeadcountEffect(n_unit, mode=coop_mode)
-        self.att_W = nn.Linear(hidden_dim, hidden_dim)
         self.index1, self.index2 = combinations(n_unit)
         dropout = nn.Dropout(0.2)
         self.MLP = nn.Sequential(
@@ -124,10 +118,10 @@ class Cooperation(nn.Module):
         a = all_embedding[self.index1]  # [10*9, 20]
         b = all_embedding[self.index2]  # [10*9, 20]
 
-        pair_wise_score = self.MLP(a * b).squeeze(dim=-1)  # [10*9]
-        pair_wise_score = pair_wise_score.unsqueeze(0).expand(batch, -1)  # [32, 10*9]
-        num_effect = self.coop_effect(unit_nums)
-        order2 = pair_wise_score * num_effect[:, self.index1] * num_effect[:, self.index2]  # [32, 10*9]
+        pair_wise_ability = self.MLP(a * b).squeeze(dim=-1)  # [10*9]
+        pair_wise_ability = pair_wise_ability.unsqueeze(0).expand(batch, -1)  # [32, 10*9]
+        num_utility = self.coop_effect(unit_nums)
+        order2 = pair_wise_ability * num_utility[:, self.index1] * num_utility[:, self.index2]  # [32, 10*9]
         order2 = order2.sum(-1)  # [32]
         return order2
 
@@ -150,7 +144,6 @@ class Suppression(nn.Module):
         self.method, self.need_att = method, need_att
         self.attack_effect = HeadcountEffect(n_unit, mode=attack_mode)
         self.defend_effect = HeadcountEffect(n_unit, mode=defend_mode)
-        self.att_W = nn.Linear(hidden_dim, hidden_dim)
         dropout = nn.Dropout(0.2)
         self.MLP = nn.Sequential(
             nn.Linear(hidden_dim, 64), nn.ReLU(), dropout,
@@ -165,8 +158,8 @@ class Suppression(nn.Module):
 
     def forward(self, team_A, team_B):
         batch = len(team_A)
-        attack_num_effect = self.attack_effect(team_A)  # [batch, 10]
-        defend_num_effect = self.defend_effect(team_B)  # [batch, 10]
+        attack_num_utility = self.attack_effect(team_A)  # [batch, 10]
+        defend_num_utility = self.defend_effect(team_B)  # [batch, 10]
         all_unit = torch.arange(self.n_unit).to(team_A.device)  # [10]
         a_blade = self.blade(all_unit)  # (10, 20)
         b_chest = self.chest(all_unit)  # (10, 20)
@@ -176,7 +169,7 @@ class Suppression(nn.Module):
         a_beat_b = self.get_interaction(attack, defense)  # (10*9)
 
         a_beat_b = a_beat_b.unsqueeze(0).expand(batch, -1)  # (64, 10*9)
-        a_beat_b = a_beat_b * attack_num_effect[:, self.index1] * defend_num_effect[:, self.index2]
+        a_beat_b = a_beat_b * attack_num_utility[:, self.index1] * defend_num_utility[:, self.index2]
         a_beat_b = a_beat_b.sum(-1)
         return a_beat_b
 
